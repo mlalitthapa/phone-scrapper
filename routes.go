@@ -2,16 +2,17 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	"net/http"
+	"github.com/mlalitthapa/phone-scrapper/app/brand"
 	"os"
 )
 
 func InitializeRoute() {
 	r := gin.Default()
 
-	r.GET("/", func(context *gin.Context) {
-		context.JSON(http.StatusOK, "HELLO WORLD")
-	})
+	api := r.Group("/api")
+	v1 := api.Group("/v1")
+
+	brand.Register(v1)
 
 	r.Run(":" + os.Getenv("PORT"))
 }
