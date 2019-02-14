@@ -1,17 +1,39 @@
 package brand
 
 import (
+	"github.com/PuerkitoBio/goquery"
 	"github.com/gin-gonic/gin"
 	"github.com/mlalitthapa/phone-scrapper/app"
+	"github.com/mlalitthapa/phone-scrapper/utils"
 	"net/http"
 )
 
 func Register(r *gin.RouterGroup) {
-	app.DB.AutoMigrate(&Brand{})
+	//app.DB.AutoMigrate(&Brand{})
 
 	r.GET("/brand", GetBrands)
 }
 
 func GetBrands(c *gin.Context) {
-	c.JSON(http.StatusOK, "Brands")
+	doc, err := app.Scrape(utils.BrandUrl)
+	if err != nil {
+		utils.Dump(err)
+	}
+
+	var brands []*Brand
+
+	doc.Find("div.st-text table tbody a").Each(func(i int, link *goquery.Selection) {
+		brand := &Brand{
+			Name:    link.Clone().Children().Remove().End().Text(),
+			Devices: link.Find("span").Text(),
+		}
+
+		brandLink, exists := link.Attr("href")
+		if exists {
+			brand.Slug = brandLink
+		}
+
+		brands = append(brands, brand)
+	})
+	c.JSON(http.StatusOK, brands)
 }
