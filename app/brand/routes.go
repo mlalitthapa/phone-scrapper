@@ -5,7 +5,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/mlalitthapa/phone-scrapper/app"
 	"github.com/mlalitthapa/phone-scrapper/utils"
-	"net/http"
 )
 
 func Register(r *gin.RouterGroup) {
@@ -17,7 +16,7 @@ func Register(r *gin.RouterGroup) {
 func GetBrands(c *gin.Context) {
 	doc, err := app.Scrape(utils.BrandUrl)
 	if err != nil {
-		utils.Dump(err)
+		app.ErrorResponse(c, err)
 	}
 
 	var brands []*Brand
@@ -35,5 +34,6 @@ func GetBrands(c *gin.Context) {
 
 		brands = append(brands, brand)
 	})
-	c.JSON(http.StatusOK, brands)
+
+	app.SuccessResponse(c, brands)
 }
