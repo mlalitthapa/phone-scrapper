@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/mlalitthapa/phone-scrapper/app"
 	"github.com/mlalitthapa/phone-scrapper/utils"
+	"strconv"
 )
 
 func Register(r *gin.RouterGroup) {
@@ -63,13 +64,27 @@ func GetBrandDevices(c *gin.Context) {
 		})
 	})
 
-	doc.Find(".review-nav .nav-pages a").Each(func(i int, p *goquery.Selection) {
+	navPages := doc.Find(".review-nav .nav-pages")
+
+	navPages.Find("a").Each(func(i int, p *goquery.Selection) {
 		link, _ := p.Attr("href")
-		pages = append(pages, &app.Page{
-			Label: p.Text(),
-			Link:  link,
-		})
+		page, err := strconv.ParseInt(p.Text(), 10, 64)
+		if err != nil {
+			utils.Dump(err)
+		} else {
+			pages = append(pages, &app.Page{
+				Page: uint(page),
+				Link: link,
+			})
+		}
 	})
+
+	currentPage, err := strconv.ParseInt(navPages.Find("strong").First().Text(), 10, 64)
+	if err == nil {
+		pages = append(pages, &app.Page{
+			Page: uint(currentPage),
+		})
+	}
 
 	app.SuccessResponse(c, map[string]interface{}{
 		"devices": devices,
