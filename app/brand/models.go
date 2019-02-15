@@ -7,3 +7,14 @@ type Brand struct {
 
 	Devices string `json:"devices" gorm:"-"`
 }
+
+type deviceImage struct {
+	Src string `json:"src"`
+	Alt string `json:"alt"`
+}
+
+type device struct {
+	Name  string      `json:"name"`
+	Slug  string      `json:"slug"`
+	Image deviceImage `json:"image"`
+}
