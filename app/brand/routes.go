@@ -22,16 +22,12 @@ func GetBrands(c *gin.Context) {
 	var brands []*Brand
 
 	doc.Find("div.st-text table tbody a").Each(func(i int, link *goquery.Selection) {
+		brandLink, _ := link.Attr("href")
 		brand := &Brand{
 			Name:    link.Clone().Children().Remove().End().Text(),
+			Slug:    brandLink,
 			Devices: link.Find("span").Text(),
 		}
-
-		brandLink, exists := link.Attr("href")
-		if exists {
-			brand.Slug = brandLink
-		}
-
 		brands = append(brands, brand)
 	})
 
