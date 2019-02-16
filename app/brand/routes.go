@@ -4,6 +4,7 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gin-gonic/gin"
 	"github.com/mlalitthapa/phone-scrapper/app"
+	"github.com/mlalitthapa/phone-scrapper/app/shared"
 	"github.com/mlalitthapa/phone-scrapper/utils"
 	"sort"
 	"strconv"
@@ -46,24 +47,10 @@ func GetBrandDevices(c *gin.Context) {
 		return
 	}
 
-	var devices []*device
 	var pages app.Pages
 
-	doc.Find("#review-body ul li a").Each(func(i int, d *goquery.Selection) {
-		name := d.Find("strong span").Text()
-		slug, _ := d.Attr("href")
-		image := d.Find("img")
-		imageLink, _ := image.Attr("src")
-		imageAlt, _ := image.Attr("title")
-		devices = append(devices, &device{
-			Name: name,
-			Slug: slug,
-			Image: deviceImage{
-				Src: imageLink,
-				Alt: imageAlt,
-			},
-		})
-	})
+	// Get the list of devices from document
+	devices := shared.GetDeviceList(doc)
 
 	navPages := doc.Find(".review-nav .nav-pages")
 
