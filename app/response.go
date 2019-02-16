@@ -12,8 +12,8 @@ func SuccessResponse(c *gin.Context, data interface{}) {
 	})
 }
 
-func ErrorResponse(c *gin.Context, err error) {
-	c.JSON(http.StatusInternalServerError, map[string]interface{}{
+func ErrorResponse(c *gin.Context, status int, err error) {
+	c.JSON(status, map[string]interface{}{
 		"error": true,
 		"data":  err.Error(),
 	})

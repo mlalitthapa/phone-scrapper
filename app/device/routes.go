@@ -4,6 +4,7 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gin-gonic/gin"
 	"github.com/mlalitthapa/phone-scrapper/app"
+	"net/http"
 	"strings"
 )
 
@@ -15,7 +16,7 @@ func Detail(c *gin.Context) {
 	slug := c.Param("slug")
 	doc, err := app.Scrape(slug)
 	if err != nil {
-		app.ErrorResponse(c, err)
+		app.ErrorResponse(c, http.StatusInternalServerError, err)
 		return
 	}
 
