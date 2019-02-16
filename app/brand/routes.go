@@ -6,6 +6,7 @@ import (
 	"github.com/mlalitthapa/phone-scrapper/app"
 	"github.com/mlalitthapa/phone-scrapper/app/shared"
 	"github.com/mlalitthapa/phone-scrapper/utils"
+	"net/http"
 	"sort"
 	"strconv"
 )
@@ -20,7 +21,8 @@ func Register(r *gin.RouterGroup) {
 func GetBrands(c *gin.Context) {
 	doc, err := app.Scrape(utils.BrandUrl)
 	if err != nil {
-		app.ErrorResponse(c, err)
+		app.ErrorResponse(c, http.StatusInternalServerError, err)
+		return
 	}
 
 	var brands []*Brand
@@ -43,7 +45,7 @@ func GetBrandDevices(c *gin.Context) {
 
 	doc, err := app.Scrape(slug)
 	if err != nil {
-		app.ErrorResponse(c, err)
+		app.ErrorResponse(c, http.StatusInternalServerError, err)
 		return
 	}
 
