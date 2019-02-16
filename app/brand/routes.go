@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/mlalitthapa/phone-scrapper/app"
 	"github.com/mlalitthapa/phone-scrapper/utils"
+	"sort"
 	"strconv"
 )
 
@@ -46,7 +47,7 @@ func GetBrandDevices(c *gin.Context) {
 	}
 
 	var devices []*device
-	var pages []*app.Page
+	var pages app.Pages
 
 	doc.Find("#review-body ul li a").Each(func(i int, d *goquery.Selection) {
 		name := d.Find("strong span").Text()
@@ -85,6 +86,7 @@ func GetBrandDevices(c *gin.Context) {
 			Page: uint(currentPage),
 		})
 	}
+	sort.Sort(app.Pages(pages))
 
 	app.SuccessResponse(c, map[string]interface{}{
 		"devices": devices,
