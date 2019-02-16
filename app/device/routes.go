@@ -62,9 +62,10 @@ func Images(img chan []*Image, doc *goquery.Document) {
 		imagesDoc, err := app.Scrape(imgLink)
 		if err == nil {
 			imagesDoc.Find("#pictures-list img").Each(func(i int, image *goquery.Selection) {
+				dataSrc := image.AttrOr("data-src", "")
 				images = append(images, &Image{
 					Name: image.AttrOr("alt", ""),
-					Src:  image.AttrOr("src", ""),
+					Src:  image.AttrOr("src", dataSrc),
 				})
 			})
 		}
