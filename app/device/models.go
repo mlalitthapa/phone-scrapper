@@ -7,7 +7,13 @@ type Spec struct {
 
 type Specs []*Spec
 
+type Image struct {
+	Name string `json:"name"`
+	Src  string `json:"src"`
+}
+
 type Device struct {
-	Name  string           `json:"name"`
-	Specs map[string]Specs `json:"specs"`
+	Name   string           `json:"name"`
+	Specs  map[string]Specs `json:"specs"`
+	Images []*Image         `json:"images"`
 }
