@@ -9,6 +9,7 @@ import (
 )
 
 func Register(r *gin.RouterGroup) {
+	r.GET("/latest", LatestDevices)
 	r.GET("/device/:slug", Detail)
 }
 
@@ -73,4 +74,31 @@ func Images(img chan []*Image, doc *goquery.Document) {
 	}
 
 	img <- images
+}
+
+// Get latest devices
+func LatestDevices(c *gin.Context) {
+	// Browse the homepage and get the document
+	doc, err := app.Scrape("")
+	if err != nil {
+		app.ErrorResponse(c, http.StatusInternalServerError, err)
+		return
+	}
+
+	sidebar := doc.Find("aside.sidebar").First()
+	latestModule := sidebar.Find("div.module-phones").First()
+	var devices []*app.Device
+	latestModule.Find("a.module-phones-link").Each(func(i int, device *goquery.Selection) {
+		image := device.Find("img").First()
+		devices = append(devices, &app.Device{
+			Name: device.Text(),
+			Slug: device.AttrOr("href", ""),
+			Image: app.DeviceImage{
+				Alt: device.Text(),
+				Src: image.AttrOr("src", ""),
+			},
+		})
+	})
+
+	app.SuccessResponse(c, devices)
 }
