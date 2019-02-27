@@ -51,6 +51,8 @@ func GetBrandDevices(c *gin.Context) {
 
 	var pages app.Pages
 
+	brandName := doc.Find("h1.article-info-name").Text()
+
 	// Get the list of devices from document
 	devices := shared.GetDeviceList(doc)
 
@@ -78,6 +80,7 @@ func GetBrandDevices(c *gin.Context) {
 	sort.Sort(app.Pages(pages))
 
 	app.SuccessResponse(c, map[string]interface{}{
+		"name":    brandName,
 		"devices": devices,
 		"pages":   pages,
 	})
