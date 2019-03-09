@@ -8,6 +8,7 @@ import (
 	"github.com/mlalitthapa/phone-scrapper/app/shared"
 	"github.com/mlalitthapa/phone-scrapper/utils"
 	"net/http"
+	"net/url"
 )
 
 func Register(r *gin.RouterGroup) {
@@ -21,7 +22,7 @@ func Results(c *gin.Context) {
 		return
 	}
 
-	doc, err := app.Scrape(fmt.Sprintf(utils.SearchUrl, query))
+	doc, err := app.Scrape(fmt.Sprintf(utils.SearchUrl, url.QueryEscape(query)))
 	if err != nil {
 		app.ErrorResponse(c, http.StatusInternalServerError, err)
 		return
